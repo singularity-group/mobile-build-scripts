@@ -1,0 +1,9 @@
+{
+  "name": "com.gamingforgood.mobile_build_scripts",
+  "version": "1.0.0",
+  "displayName": "Mobile build scripts",
+  "description": "These scripts are required to successfully build a Unity project that uses our native plugins",
+  "unity": "2019.1",
+  "dependencies": {
+  }
+}
