@@ -12,6 +12,10 @@ public class PostprocessAddressSanitizer : IPostGenerateGradleAndroidProject {
 
     // note: assumes android:extractNativeLibs="true" is set in the app manifest, see https://developer.android.com/ndk/guides/asan#running
     public void OnPostGenerateGradleAndroidProject(string unityLibraryPath) {
+        if (!PreprocessAddressSanitizer.EnableAsanSupport) {
+            return;
+        }
+        
         var launcherDir = Path.GetFullPath(Path.Combine(unityLibraryPath, "..", "launcher"));
         // \launcher\src\main\resources\lib\armeabi-v7a\wrap.sh
         var wrapScriptOutput = Path.Combine(launcherDir, "src", "main", "resources", "lib", "armeabi-v7a", "wrap.sh");

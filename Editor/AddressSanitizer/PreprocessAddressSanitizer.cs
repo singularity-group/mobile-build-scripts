@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -7,7 +8,22 @@ public class PreprocessAddressSanitizer : IPreprocessBuildWithReport {
 
     /// Adds a lot of overhead to the app when it runs.
     /// https://developer.android.com/ndk/guides/asan#building
-    public static bool EnableAsanSupport = false;
+    public static bool EnableAsanSupport {
+        get => File.Exists(enableFile);
+        set {
+            if (value) {
+                File.Create(enableFile);
+            } else {
+                try {
+                    File.Delete(enableFile);
+                } catch {
+                    // ignored
+                }
+            }
+        }
+    }
+
+    static string enableFile => Path.Combine(Application.dataPath, "AddressSanitizer.txt");
     
     public void OnPreprocessBuild(BuildReport report) {
         if (report.summary.platformGroup != BuildTargetGroup.Android) {
