@@ -47,6 +47,10 @@ namespace Commons.Editor {
             var usePrebuiltArtifacts = PreprocessAndroidPlugins.UsePrebuiltAndroidArtifacts;
             var moduleNames = PreprocessAndroidPlugins.GetNeededModuleNames();
 
+            if (moduleNames.Count == 0) {
+                return false; // nothing to be done
+            }
+
             string outputFolderAars = Path.Combine(outputFolder, "Android");
             if (usePrebuiltArtifacts) {
                 Debug.Log($"Getting android modules: {String.Join(", ", moduleNames)}");

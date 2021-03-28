@@ -136,14 +136,11 @@ implementation({versionString}) {{
         }
 
         /// Sanity checks.
-        /// <exception cref="BuildFailedException">
-        /// When script works properly, this exception is never thrown.
-        /// </exception>
         private static void CheckAtleast(int atleast, IEnumerable<object> items, string itemsName) {
             int actualCount = items.Count();
 
             if (actualCount < atleast) {
-                throw new BuildFailedException($"found {actualCount} {itemsName}! thats strange, expected at least {atleast}.");
+                Debug.LogWarning($"found {actualCount} {itemsName}! thats strange, expected at least {atleast}.");
             }
         }
     }
