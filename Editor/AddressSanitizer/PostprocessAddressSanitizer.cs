@@ -10,6 +10,7 @@ public class PostprocessAddressSanitizer : IPostGenerateGradleAndroidProject {
         Path.Combine(Path.Combine(Path.GetFullPath("Packages/com.gamingforgood.mobile_build_scripts"),
         "Editor", "AddressSanitizer"));
 
+    // note: assumes android:extractNativeLibs="true" is set in the app manifest, see https://developer.android.com/ndk/guides/asan#running
     public void OnPostGenerateGradleAndroidProject(string unityLibraryPath) {
         var launcherDir = Path.GetFullPath(Path.Combine(unityLibraryPath, "..", "launcher"));
         // \launcher\src\main\resources\lib\armeabi-v7a\wrap.sh
