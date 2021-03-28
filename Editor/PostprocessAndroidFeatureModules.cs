@@ -17,6 +17,11 @@ namespace Commons.Editor {
         public void OnPostGenerateGradleAndroidProject(string unityLibraryPath) {
             Debug.Log("PostprocessAndroidFeatureModules");
             try {
+                if (string.IsNullOrEmpty(FileFinder.GetRepoRoot())) {
+                    Debug.Log("This project has no git repo, so likely not ClashOfStreamers," +
+                              " skipping unitranslate and vivox modules.");
+                    return;
+                }
                 AddUniTranslate(unityLibraryPath);
                 AddVivox(unityLibraryPath);
             } catch (BuildFailedException) {
