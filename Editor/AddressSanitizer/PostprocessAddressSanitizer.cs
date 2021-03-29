@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor.Android;
 using UnityEditor.Build;
@@ -15,25 +16,27 @@ public class PostprocessAddressSanitizer : IPostGenerateGradleAndroidProject {
         if (!PreprocessAddressSanitizer.EnableAsanSupport) {
             return;
         }
-        
-        var launcherDir = Path.GetFullPath(Path.Combine(unityLibraryPath, "..", "launcher"));
-        // \launcher\src\main\resources\lib\armeabi-v7a\wrap.sh
-        var wrapScriptOutput = Path.Combine(launcherDir, "src", "main", "resources", "lib", "armeabi-v7a", "wrap.sh");
-        
-        // create wrap.sh
-        var repoWrapScript = Path.Combine(AddressSanitizerDir, "Android", "wrap.sh");
-        Directory.CreateDirectory(Path.GetDirectoryName(wrapScriptOutput)!);
-        File.Copy(repoWrapScript, wrapScriptOutput, true);
-        
-        // copy Asan libs
-        if (Application.unityVersion != "2019.4.16f1") {
-            // note for later: instead of include in repo, copy from Android NDK included with Unity installation
-            throw new BuildFailedException("Unity version has updated. The Asan libs that would be copied come from android NDK that is packaged" +
-                                           "with Unity 2019.4.16f1. If Unity has updated their NDK version, then the jniLibs/ need to be updated.");
-        }
 
-        var repoAsanJniLibs = Path.Combine(AddressSanitizerDir, "Android", "jniLibs");
-        var outputJniLibs = Path.Combine(launcherDir, "src", "main", "jniLibs");
-        DirectoryUtil.DirectoryCopy(repoAsanJniLibs, outputJniLibs);
+        try {
+            var launcherDir = Path.GetFullPath(Path.Combine(unityLibraryPath, "..", "launcher"));
+
+            // copy wrap.sh
+            var repoWrapScripts = Path.Combine(AddressSanitizerDir, "Android", "cvs", "lib");
+            var wrapScriptOutput = Path.Combine(launcherDir, "src", "main", "resources", "lib");
+            DirectoryUtil.DirectoryCopy(repoWrapScripts, wrapScriptOutput);
+
+            // copy Asan libs
+            if (Application.unityVersion != "2019.4.16f1") {
+                // note for later: instead of include in repo, copy from Android NDK included with Unity installation
+                throw new BuildFailedException("Unity version has updated. The Asan libs that would be copied come from android NDK that is packaged" +
+                    "with Unity 2019.4.16f1. If Unity has updated their NDK version, then the jniLibs/ need to be updated.");
+            }
+
+            var repoAsanJniLibs = Path.Combine(AddressSanitizerDir, "Android", "cvs", "jniLibs");
+            var outputJniLibs = Path.Combine(launcherDir, "src", "main", "jniLibs");
+            DirectoryUtil.DirectoryCopy(repoAsanJniLibs, outputJniLibs);
+        } catch (Exception ex) {
+            throw new BuildFailedException(ex);
+        }
     }
 }
