@@ -14,12 +14,20 @@ namespace Commons.Editor {
     internal class PostprocessAndroidFeatureModules : IPostGenerateGradleAndroidProject {
         public int callbackOrder => 50;
 
+        // todo: move this code to some other project used only by Clash of Streamers builds
         public void OnPostGenerateGradleAndroidProject(string unityLibraryPath) {
             Debug.Log("PostprocessAndroidFeatureModules");
+            
             try {
                 if (string.IsNullOrEmpty(FileFinder.GetRepoRoot())) {
                     Debug.Log("This project has no git repo, so likely not ClashOfStreamers," +
                               " skipping unitranslate and vivox modules.");
+                    return;
+                }
+                var skipVar = Environment.GetEnvironmentVariable(
+                    "SKIP_GENERATE_GRADLE_ANDROID_PROJECT"
+                );
+                if (skipVar == "1") {
                     return;
                 }
                 AddUniTranslate(unityLibraryPath);
