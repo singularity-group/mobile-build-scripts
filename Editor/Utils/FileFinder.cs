@@ -23,6 +23,12 @@ namespace Commons.Editor {
         /// <returns>The absolute path to the root of this git repository</returns>
         [NotNull]
         public static string GetRepoRoot() {
+            // env is set can be set by demo projects
+            var fromEnv = Environment.GetEnvironmentVariable("COS_REPO_DIRECTORY");
+            if (fromEnv != null) {
+                return fromEnv;
+            }
+
             if (gitRepoRoot == null) {
                 var repoRootTask = ProcessFactory.RunGitCommand("rev-parse", "--show-toplevel");
                 repoRootTask.WaitForExit();
