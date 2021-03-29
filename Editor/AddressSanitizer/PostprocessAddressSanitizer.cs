@@ -22,7 +22,8 @@ public class PostprocessAddressSanitizer : IPostGenerateGradleAndroidProject {
 
             // copy wrap.sh
             var repoWrapScripts = Path.Combine(AddressSanitizerDir, "Android", "cvs", "lib");
-            var wrapScriptOutput = Path.Combine(launcherDir, "src", "main", "resources", "lib");
+            // using _lib because of bundle tool bug, see https://github.com/google/bundletool/issues/149#issuecomment-809175164
+            var wrapScriptOutput = Path.Combine(launcherDir, "src", "main", "resources", "_lib");
             DirectoryUtil.DirectoryCopy(repoWrapScripts, wrapScriptOutput);
 
             // copy Asan libs
