@@ -37,16 +37,16 @@ namespace Commons.Editor {
                 process.OutputDataReceived += (sender, e) => {
                     var data = e.Data;
                     if (data != null) {
-                        UnityEngine.Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
-                    }
-                };
-                process.ErrorDataReceived += (sender, e) => {
-                    var data = e.Data;
-                    if (data != null) {
-                        UnityEngine.Debug.LogFormat(LogType.Error, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
+                        Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
                     }
                 };
             }
+            process.ErrorDataReceived += (sender, e) => {
+                var data = e.Data;
+                if (data != null) {
+                    Debug.LogFormat(LogType.Error, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
+                }
+            };
 
             process.Start();
 
@@ -65,11 +65,11 @@ namespace Commons.Editor {
         /// <param name="arguments"></param>
         /// <param name="timeoutSeconds"></param>
         /// <exception cref="Exception">Timed out waiting for process to finish, it had to be killed.</exception>
-        public static void RunProcess([NotNull] string filename, [NotNull] string arguments, int timeoutSeconds) {
+        public static void RunProcess([NotNull] string filename, [NotNull] string arguments, int timeoutSeconds, bool logStdout = true) {
             Debug.Log($"Running process '{filename} {arguments}'");
             var process = StartProcess(filename, arguments,
                 workingDirectory: Path.GetDirectoryName(filename), redirectOutput: true,
-                logOut: true, tag: Path.GetFileName(filename));
+                logOut: logStdout, tag: Path.GetFileName(filename));
 
             Assert.IsNotNull(process, nameof(process) + " != null");
 

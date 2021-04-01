@@ -212,7 +212,7 @@ namespace Commons.Editor {
                 File.WriteAllText(localPropertiesFile, fileContents);
             }
 
-            ProcessFactory.RunProcess(gradlew, arguments, timeoutSeconds);
+            ProcessFactory.RunProcess(gradlew, arguments, timeoutSeconds, false);
         }
 
         private static string TryGetAndroidSdkDirectory() {
