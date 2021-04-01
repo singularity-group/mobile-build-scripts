@@ -10,7 +10,7 @@ namespace Commons.Editor {
 
     internal static class ProcessFactory {
 
-        public static Process RunGitCommand(string command, string arguments, bool redirectOutput = false) {
+        public static Process RunGitCommand(string command, string arguments, bool redirectOutput = true) {
             var proc = StartProcess("git", $"{command} {arguments}", redirectOutput: redirectOutput);
             proc.WaitForExit();
             return proc;
@@ -33,24 +33,24 @@ namespace Commons.Editor {
                 StartInfo = ProcessInfoFactory.Create(fileName, arguments, useShell, redirectOutput, workingDirectory)
             };
 
-            if (redirectOutput) {
+            if (redirectOutput && logOut) {
                 process.OutputDataReceived += (sender, e) => {
                     var data = e.Data;
-                    if (data != null && logOut) {
+                    if (data != null) {
                         Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
                     }
                 };
-                process.ErrorDataReceived += (sender, e) => {
-                    var data = e.Data;
-                    if (data != null) {
-                        Debug.LogFormat(LogType.Error, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
-                    }
-                };
             }
+            process.ErrorDataReceived += (sender, e) => {
+                var data = e.Data;
+                if (data != null) {
+                    Debug.LogFormat(LogType.Error, LogOption.NoStacktrace, null,$"[{tag ?? fileName}] {data}");
+                }
+            };
 
             process.Start();
 
-            if (redirectOutput) {
+            if (redirectOutput && logOut) {
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
             }
