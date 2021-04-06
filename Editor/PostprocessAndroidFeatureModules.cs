@@ -32,6 +32,7 @@ namespace Commons.Editor {
                 }
                 AddUniTranslate(unityLibraryPath);
                 AddVivox(unityLibraryPath);
+                AddBluestacksEtc2Textures(unityLibraryPath);
             } catch (BuildFailedException) {
                 throw;
             } catch (Exception ex) {
@@ -44,6 +45,13 @@ namespace Commons.Editor {
             }
         }
 
+        private static void AddBluestacksEtc2Textures(string unityLibraryPath) {
+            var srcModuleDirectory = Path.Combine(FileFinder.GetRepoRoot(), 
+                "MobilePlugins", "NativeSources", "Android", "bluestacks_etc2_conditional");
+            // Build/Build will copy the etc2 textures into the condtional module (if any exist)
+            AddDynamicFeatureModule(unityLibraryPath, srcModuleDirectory, "bluestacks_etc2_conditional");
+        }
+        
         private static void AddUniTranslate(string unityLibraryPath) {
             // assemble aar and move it to /unityLibrary/libs/unitranslate-release.aar
             var libsFolder = Path.Combine(unityLibraryPath, "libs");
