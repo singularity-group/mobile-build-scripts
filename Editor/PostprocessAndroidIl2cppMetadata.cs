@@ -35,9 +35,11 @@ public class PostprocessAndroidIl2cppMetadata : IPostGenerateGradleAndroidProjec
                 default: throw new NotSupportedException("ALL architecture not supported because of buzzing");
             }
             var from = Path.Combine(unityLibraryPath, "src/main/assets/bin/Data/Managed/Metadata/global-metadata.dat");
-            var to = Path.Combine(unityLibraryPath, $"src/main/jniLibs/{abiName}/libglobal-metadata.so");
-            Directory.CreateDirectory(Path.GetDirectoryName(to)!);
-            File.Move(from, to);
+            if (File.Exists(from)) {
+                var to = Path.Combine(unityLibraryPath, $"src/main/jniLibs/{abiName}/libglobal-metadata.so");
+                Directory.CreateDirectory(Path.GetDirectoryName(to)!);
+                File.Move(from, to);
+            }
         } catch (BuildFailedException) {
             throw;
         } catch (Exception ex) {
