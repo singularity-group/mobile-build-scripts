@@ -8,8 +8,10 @@ using UnityEngine;
 
 public class PostprocessAndroidIl2cppMetadata : IPostGenerateGradleAndroidProject {
     public int callbackOrder => 0;
+    private static bool enabled = false;
     
     public void OnPostGenerateGradleAndroidProject(string unityLibraryPath) {
+        if (!enabled) return;
         Debug.Log("PostprocessAndroidIl2cppMetadata");
             
         try {
