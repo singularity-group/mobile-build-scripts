@@ -16,8 +16,13 @@ namespace Commons.Editor {
         private const int bestLatency = 256;
         private const int goodLatency = 512;
         private const int bestPerformance = 1024;
+
+        static bool enabled = false;
         
         public void OnPreprocessBuild(BuildReport report) {
+            if (!enabled) {
+                return;
+            }
             var isCloudBuild = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("GITLAB_CI"));
 
             if (isCloudBuild) {
