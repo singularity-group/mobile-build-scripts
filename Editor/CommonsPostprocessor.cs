@@ -88,6 +88,7 @@ namespace Commons.Editor {
             }
             schemes.AddString("fb"); // Allow checking whether Facebook is installed.
             schemes.AddString("twitter"); // Allow checking whether Twitter is installed.
+            schemes.AddString("paypal"); // Allow checking whether Paypal app is installed.
             infoDoc.root.values["LSApplicationQueriesSchemes"] = schemes;
         }
 
