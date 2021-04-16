@@ -230,36 +230,18 @@ extern ""C"" bool COS_UWRSetMaxConcurrentOperations(int32_t maxConcurrentOps) {
     return true;
 }";
 
-        private const string initLine = "webOperationQueue = [[NSOperationQueue alloc] init];";
-
-        /// https://forum.unity.com/threads/unitywebrequests-on-ios-sometimes-get-stuck-indefinitely-even-with-timeout-set.1012276/page-3#post-6723370
-        /// Using NSQualityOfServiceUserInitiated because we dont want web requests to cause game lag.
-        private const string stuckFix = "webOperationQueue.qualityOfService = NSQualityOfServiceUserInitiated;"
-            + " // G4G: line added by UnityWebRequestPatch (in CommonsPostprocessor.cs)";
-
         /// Modifies Unity ObjC source code file
         public static void ApplyPatch(string pathToBuiltProject) {
-            var sourceFile = Path.Combine(pathToBuiltProject, "Classes", "Unity", "UnityWebRequest.mm");
+            var outputFile = Path.Combine(pathToBuiltProject, "Classes", "Unity", "UnityWebRequest.mm");
+            // https://trello.com/c/Frv9DuWZ/5112-apply-changes-to-unitywebrequestmm-from-2019424f1
+            var sourceFile = Path.GetFullPath(
+                    "Packages/com.gamingforgood.mobile_build_scripts/Editor/UnityWebRequest_2019.4.24f1.mm");
             var lines = File.ReadAllLines(sourceFile).ToList();
-            var codeToBeAddedFirstLine = codeToBeAdded.Split('\n')[1];
-            var matchLineIndex = lines.FindIndex(line => line == codeToBeAddedFirstLine);
 
-            if (matchLineIndex >= 0) {
-                // already patched, this is probably an append build
-                Debug.Log("[UnityWebRequestPatch] xcode project is already patched.");
-            } else {
-                Debug.Log("[UnityWebRequestPatch] ApplyPatch cus we didnt find\n" +
-                          codeToBeAddedFirstLine);
-                lines.Add(codeToBeAdded);
-                
-                var initMatchLineIndex = lines.FindIndex(line => line.Trim() == initLine);
-                if (initMatchLineIndex >= 0) {
-                    lines.Insert(initMatchLineIndex + 1, stuckFix);
-                } else {
-                    throw new BuildFailedException("did not find the line where UnityWebRequest patch should be added");
-                }
-                File.WriteAllLines(sourceFile, lines);
-            }
+            Debug.Log("[UnityWebRequestPatch] ApplyPatch");
+            lines.Add(codeToBeAdded);
+            
+            File.WriteAllLines(outputFile, lines);
         }
 
         [MenuItem("Build/Advanced/Test iOS UnityWebRequestPatch")]
