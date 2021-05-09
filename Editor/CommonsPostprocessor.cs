@@ -80,7 +80,8 @@ namespace Commons.Editor {
             infoDoc.root.values["NSAppTransportSecurity"] = new PlistElementDict {
                 ["NSAllowsArbitraryLoads"] = new PlistElementBoolean(true),
             };
-            
+
+            infoDoc.AddInfoDocValue("NSUserTrackingUsageDescription", "Your data will be used to deliver personalized ads to you");
             // Schemes of iOS apps whose installation status can be checked by Commons.AppDetector.IsAppInstalled.
             var schemes = new PlistElementArray();
             if (infoDoc.root.values.TryGetValue("LSApplicationQueriesSchemes", out var existingSchemes)) {
