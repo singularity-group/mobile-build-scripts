@@ -27,6 +27,7 @@ namespace Commons.Editor {
                 var proguardFiles = new Dictionary<string, string> {
                     { "Packages/com.google.play.core/Proguard/common.txt", "proguard-com.google.play.core.txt"},
                     { "Packages/com.google.play.review/Proguard/review.txt", "proguard-com.google.play.review.txt"},
+                    { "Packages/com.gamingforgood.adjust_sdk/Proguard/proguard-rules.txt", "proguard-com.gamingforgood.adjust_sdk.txt"},
                 };
                 
                 foreach (var pair in proguardFiles) {
