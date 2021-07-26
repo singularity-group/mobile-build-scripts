@@ -83,7 +83,7 @@ namespace Commons.Editor {
 
         // Directory path is copied from Build/Build source code
         internal static string ArtifactsDirectory =
-            Path.Combine(FileFinder.GetRepoRoot(), "AndroidPlugins", "build", "built_modules");
+            Path.Combine(FileFinder.GetRepoRoot(), "MobilePlugins", "build", "built_modules");
 
         public static void GetAars(HashSet<string> neededModules, string outputFolder) {
             foreach (var moduleName in neededModules) {
