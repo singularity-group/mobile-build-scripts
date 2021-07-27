@@ -172,7 +172,7 @@ namespace Commons.Editor {
         
         /// Dont call directly, use <see cref="RunGradlew"/>. 
         private static void _RunGradlew(string arguments, int timeoutSeconds) {
-            string pathToAndroidPlugins = Path.Combine(FileFinder.GetRepoRoot(), "AndroidPlugins");
+            string pathToAndroidPlugins = Path.Combine(FileFinder.GetRepoRoot(), "MobilePlugins");
             bool isWinEditor = Application.platform == RuntimePlatform.WindowsEditor;
             // in batch mode, gradle daemon does not let the process exit.
             // if (Application.isBatchMode) {
