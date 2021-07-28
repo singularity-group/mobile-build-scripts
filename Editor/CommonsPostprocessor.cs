@@ -232,11 +232,21 @@ extern ""C"" bool COS_UWRSetMaxConcurrentOperations(int32_t maxConcurrentOps) {
 }";
 
         /// Modifies Unity ObjC source code file
+        ///
+        /// - (legacy) if old unity version, add patch for offline bug
+        /// - add helper method to set max concurrent operations
+        ///    (Still needed in Unity 2020.3.14f1)
         public static void ApplyPatch(string pathToBuiltProject) {
+            // list of string not initialized
+            string sourceFile;
             var outputFile = Path.Combine(pathToBuiltProject, "Classes", "Unity", "UnityWebRequest.mm");
-            // https://trello.com/c/Frv9DuWZ/5112-apply-changes-to-unitywebrequestmm-from-2019424f1
-            var sourceFile = Path.GetFullPath(
-                    "Packages/com.gamingforgood.mobile_build_scripts/Editor/UnityWebRequest_2019.4.24f1.mm");
+            if (Application.unityVersion == "2019.4.16f1") {
+                // apply changes from Unity 2019.4.24f1 (an issue fixed in Unity 2019.4.24f1)
+                sourceFile = Path.GetFullPath(
+                        "Packages/com.gamingforgood.mobile_build_scripts/Editor/UnityWebRequest_2019.4.24f1.mm");
+            } else {
+                sourceFile = outputFile;
+            }
             var lines = File.ReadAllLines(sourceFile).ToList();
 
             Debug.Log("[UnityWebRequestPatch] ApplyPatch");
