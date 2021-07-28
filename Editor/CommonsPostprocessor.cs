@@ -317,7 +317,8 @@ extern ""C"" bool COS_UWRSetMaxConcurrentOperations(int32_t maxConcurrentOps) {
         /// Modifies Unity ObjC source code file
         public static void ApplyPatch(string pathToBuiltProject) {
             if (Application.unityVersion != "2019.4.16f1") {
-                throw new BuildFailedException("New Unity version - G4G code patch may cause bugs now, Troy should check if we still need the patch");
+                // has been fixed in latest LTS
+                return;
             }
             var sourceFile =
                 Path.Combine(pathToBuiltProject, "Classes", "Unity", "DisplayManager.mm");
