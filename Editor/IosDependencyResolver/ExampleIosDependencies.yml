@@ -1,0 +1,16 @@
+### Example file should be ignored ###
+example: 'the resolver ignores this whole file'
+
+# Standard cocoapod
+UnityAds:
+  version: 3.2
+
+# Public Git repository
+HaishinKit:
+  git: https://github.com/thesingularitygroup/HaishinKit.swift.git
+  commit: b207f3932b
+
+# Path from the repo root
+Commons:
+  path: MobilePlugins/NativeSources/iOS/Commons
+
