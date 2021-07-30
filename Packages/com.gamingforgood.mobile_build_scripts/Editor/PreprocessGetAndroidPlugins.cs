@@ -86,8 +86,18 @@ namespace Commons.Editor {
             Path.Combine(FileFinder.GetRepoRoot(), "MobilePlugins", "build", "built_modules");
 
         public static void GetAars(HashSet<string> neededModules, string outputFolder) {
-            foreach (var moduleName in neededModules) {
-                GetAar(moduleName, outputFolder);
+            var aarFiles = Directory.GetFiles(ArtifactsDirectory, "*.aar");
+            foreach (var aarFile in aarFiles) {
+                foreach (var moduleName in neededModules) {
+                    if (aarFile.Contains(moduleName)) {
+                        // expected
+                    } else {
+                        Debug.Log($"Copying aar {aarFile} (that is not explicitly depended on)");
+                    }
+                }
+
+                var filename = Path.GetFileName(aarFile);
+                File.Copy(aarFile, Path.Combine(outputFolder, filename), true);
             }
         }
 
