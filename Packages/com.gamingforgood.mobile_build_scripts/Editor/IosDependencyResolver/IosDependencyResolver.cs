@@ -24,9 +24,6 @@ namespace Commons.Editor {
             CreatePodfile(podfilePath);
         }
 
-        [Obsolete("not implemented, please run 'pod install' after unity build", true)]
-        public static void PodInstall(string podfilePath) { }
-
         [MenuItem("Build/Advanced/List *IosDependencies.yml files")]
         private static void MenuListFiles() {
             var depFiles = GetDeclarationFiles();
