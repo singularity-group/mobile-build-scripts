@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 using YamlDotNet.RepresentationModel;
 
 namespace Commons.Editor {
-    internal class PreprocessAndroidPlugins : IPreprocessBuildWithReport {
+    public class PreprocessAndroidPlugins : IPreprocessBuildWithReport {
         public int callbackOrder => 1;
 
         /// In cloud builds (batch mode is true), a previous job builds the android plugins.
@@ -37,7 +37,7 @@ namespace Commons.Editor {
         internal const string declarationFilename = "AndroidPluginsNeeded.yml";
 
         /// Ensure gradle dependencies are same as declared by the xml files
-        internal static void UpdateGradleTemplate(bool printGradleTemplate = false) {
+        public static void UpdateGradleTemplate(bool printGradleTemplate = false) {
             // update gradle dependencies as declared by the xml files
             GoogleExternalResolver.Resolve();
             Debug.Log("Finished resolving gradle dependencies.");

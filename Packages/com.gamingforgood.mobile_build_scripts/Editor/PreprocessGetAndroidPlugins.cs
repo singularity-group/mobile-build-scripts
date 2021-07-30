@@ -79,7 +79,7 @@ namespace Commons.Editor {
         }
     }
 
-    internal static class AndroidPluginsArtifacts {
+    public static class AndroidPluginsArtifacts {
 
         // Directory path is copied from Build/Build source code
         internal static string ArtifactsDirectory =
@@ -124,7 +124,7 @@ namespace Commons.Editor {
         }
     }
 
-    internal static class GoogleExternalResolver {
+    public static class GoogleExternalResolver {
 
         /// <summary>
         /// Update mainTemplate.gradle with the latest dependencies declared in **/*Dependencies.xml
@@ -132,7 +132,7 @@ namespace Commons.Editor {
         ///  'Patch mainTemplate.gradle' is enabled.
         /// </summary>
         /// <exception cref="Exception">When resolving failed for any reason</exception>
-        internal static void Resolve() {
+        public static void Resolve() {
             if(!Google.VersionHandler.Enabled) return;
             // recommended by https://github.com/googlesamples/unity-jar-resolver/issues/153
             Type androidResolverClass = Google.VersionHandler.FindClass(

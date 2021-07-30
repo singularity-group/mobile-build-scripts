@@ -8,7 +8,7 @@ using Debug = UnityEngine.Debug;
 
 namespace Commons.Editor {
 
-    internal static class ProcessFactory {
+    public static class ProcessFactory {
 
         public static Process RunGitCommand(string command, string arguments, bool redirectOutput = true) {
             var proc = StartProcess("git", $"{command} {arguments}", redirectOutput: redirectOutput);
