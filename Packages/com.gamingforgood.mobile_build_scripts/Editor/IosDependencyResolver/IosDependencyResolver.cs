@@ -92,13 +92,21 @@ namespace Commons.Editor {
                 .First(path => path.EndsWith($"IosDependencyResolver/{templateFileName}", StringComparison.Ordinal));
 
             var frameworkTargetLines = new StringBuilder();
+            var appTargetLines = new StringBuilder();
             string nseTargetContents = String.Empty;
             
             foreach (var pod in pods) {
-                frameworkTargetLines.AppendLine(pod.ToDeclarationLine());
-                // firebase cloud messaging pod is needed by the NSE target
-                if (pod.name == "Firebase/Messaging") {
-                    nseTargetContents = new string(' ', 4) + pod.ToDeclarationLine();
+                var targets = pod.targets ?? new[] { UnityXcodeTargets.UnityFramework };
+                
+                if (targets.Contains(UnityXcodeTargets.UnityFramework)) {
+                    frameworkTargetLines.AppendLine(pod.ToDeclarationLine());
+                    // firebase cloud messaging pod is needed by the NSE target
+                    if (pod.name == "Firebase/Messaging") {
+                        nseTargetContents = new string(' ', 4) + pod.ToDeclarationLine();
+                    }
+                }
+                if (targets.Contains(UnityXcodeTargets.UnityApp)) {
+                    appTargetLines.AppendLine(pod.ToDeclarationLine());
                 }
             }
 
@@ -110,7 +118,7 @@ namespace Commons.Editor {
             string frameworkTargetContents = frameworkTargetLines.ToString();
             podfile = podfile.Replace("**UNITY_FRAMEWORK_TARGET_CONTENTS**", frameworkTargetContents);
 
-            var appTargetLines = new StringBuilder();
+            // todo: create this app extension only when app actually requires it
             if (nseTargetContents != String.Empty) {
                 appTargetLines.AppendLine(new string(' ', 2) + "target 'NotificationServiceExtension' do");
                 appTargetLines.AppendLine(nseTargetContents);
@@ -127,6 +135,7 @@ namespace Commons.Editor {
     internal class PodDeclaration {
         // these fields are assigned by yaml deserialize
         #pragma warning disable 0649
+        public string[]? targets;
         public string? version;
         public string? path;
         public string? git;
@@ -151,7 +160,7 @@ namespace Commons.Editor {
                 // resolve any relative stuff like '/..'
                 resolvedPath = Path.GetFullPath(resolvedPath);
                 var buildDirectory = Path.GetDirectoryName(outputPathToPodfile);
-                return new PodLocal(name, resolvedPath, buildDirectory!);
+                return new PodLocal(name, resolvedPath, buildDirectory!, targets);
             }
 
             if (git != null && commit != null) {
@@ -165,6 +174,9 @@ namespace Commons.Editor {
     internal interface IPodDependency {
         /// Pod name
         string name { get; }
+        /// Targets that require this pod.
+        /// Null implies ["UnityFramework"].
+        string[]? targets { get; }
         /// Podfile line that goes 'pod ...'
         string ToDeclarationLine();
     }
@@ -173,6 +185,7 @@ namespace Commons.Editor {
     internal readonly struct PodStandard : IPodDependency {
         private readonly string version;
         public string name { get; }
+        public string[]? targets => null;
 
         public PodStandard(string name, string version) {
             this.version = version;
@@ -206,6 +219,7 @@ namespace Commons.Editor {
         private readonly string git;
         private readonly string commit;
         public string name { get; }
+        public string[]? targets => null;
 
         public string ToDeclarationLine() {
             return $"pod '{name}', :git => '{git}', :commit => '{commit}'";
@@ -219,9 +233,11 @@ namespace Commons.Editor {
     internal readonly struct PodLocal : IPodDependency {
         private readonly string path;
         public string name { get; }
+        public string[]? targets { get; }
 
-        public PodLocal(string name, string absolutePath, string buildDirectory) {
+        public PodLocal(string name, string absolutePath, string buildDirectory, string[]? targets = null) {
             this.name = name;
+            this.targets = targets;
             // create relative path from the build directory to the local pod path
             var relative = DirectoryUtil.GetRelativePath(absolutePath, buildDirectory);
             path = relative;
@@ -234,5 +250,13 @@ namespace Commons.Editor {
         public override string ToString() {
             return $"{nameof(IPodDependency)} {{ name={name}, path={path} }}";
         }
+    }
+
+    /// <summary>
+    /// All Xcode targets created by Unity.
+    /// </summary>
+    public static class UnityXcodeTargets {
+        public const string UnityApp = "Unity-iPhone";
+        public const string UnityFramework = "UnityFramework";
     }
 }

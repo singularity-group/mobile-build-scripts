@@ -14,3 +14,10 @@ HaishinKit:
 Commons:
   path: MobilePlugins/NativeSources/iOS/Commons
 
+# Add a pod to multiple targets. The default target is ["UnityFramework"].
+# This fixes a runtime crash where a vendored xcframework could not be found (discovered with Banuba xcframework).
+MyVendoredFramework:
+  targets:
+    - UnityFramework
+    - Unity-iPhone
+  path: https://github.com/CocoaPods/Specs/blob/master/Specs/e/2/1/FirebaseAnalytics/7.3.0-M1/FirebaseAnalytics.podspec.json
