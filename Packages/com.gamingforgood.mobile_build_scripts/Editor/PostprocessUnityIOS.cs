@@ -61,6 +61,7 @@ namespace Commons.Editor {
         /// </summary>
         void EditInfoDoc(PlistDocument infoDoc);
 
+        // todo: move to a separate interface; this method is rarely implemented
         /// <summary>
         /// Edit the GoogleService info.plist
         /// </summary>
