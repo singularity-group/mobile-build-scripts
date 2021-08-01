@@ -29,9 +29,9 @@ namespace Commons.Editor {
 
         public void OnPostprocessBuild(BuildReport report) {
             if (report.summary.platformGroup != BuildTargetGroup.iOS) return;
-#if UNITY_IOS
-            RegisterPostProcessor(new CommonsPostprocessor());
-#endif
+        #if UNITY_IOS
+            RegisterPostProcessor(new PostprocessForSwift());
+        #endif
 
             Debug.Log("⏩ PostprocessUnityIOS begins...");
 
