@@ -6,7 +6,9 @@ namespace Commons.Editor {
     /// Adds support for writing Swift plugins.
     /// Designed for iOS, and may work for Mac as well.
     public class PostprocessForSwift : IPostProcessIOS {
-        public static PBXProject EditXcodeProject(PBXProject pbx, string targetGuid) {
+        public int callbackOrder => 1; // can be run at any time
+
+        public PBXProject EditXcodeProject(PBXProject pbx, string targetGuid) {
             return AddSwiftCodeEssentials(pbx, targetGuid);
         }
 
@@ -38,11 +40,11 @@ namespace Commons.Editor {
             return pbx;
         }
 
-        void EditInfoDoc(PlistDocument infoDoc) {}
+        public void EditInfoDoc(PlistDocument infoDoc) {}
 
-        void EditGoogleServicePlist(PlistDocument googlePlist) {}
+        public void EditGoogleServicePlist(PlistDocument googlePlist) {}
 
-        void LastMethod(string pathToBuiltProject) {}
+        public void LastMethod(string pathToBuiltProject) {}
     }
 }
 #endif
