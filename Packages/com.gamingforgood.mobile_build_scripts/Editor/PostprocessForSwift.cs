@@ -8,8 +8,8 @@ namespace Commons.Editor {
     public class PostprocessForSwift : IPostProcessIOS {
         public int callbackOrder => 1; // can be run at any time
 
-        public PBXProject EditXcodeProject(PBXProject pbx, string targetGuid) {
-            return AddSwiftCodeEssentials(pbx, targetGuid);
+        public PBXProject EditXcodeProject(PBXProject pbx, string pathToBuiltProject) {
+            return AddSwiftCodeEssentials(pbx, pbx.GetUnityFrameworkTargetGuid());
         }
 
         private static PBXProject AddSwiftCodeEssentials(PBXProject pbx, string targetGuid) {
