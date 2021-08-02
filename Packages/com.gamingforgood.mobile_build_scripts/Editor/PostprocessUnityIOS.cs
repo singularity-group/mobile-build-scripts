@@ -101,6 +101,16 @@ namespace Commons.Editor {
 
             EditInfoDoc(pathToBuiltProject, postProcessors);
 
+            // create Podfile and install pods
+            var podfilePath = Path.Combine(pathToBuiltProject, "Podfile");
+            IosDependencyResolver.CreatePodfile(podfilePath);
+            if (File.Exists(podfilePath)) {
+                // install dependencies to build xcode project (also creates xcworkspace)
+                Debug.Log("Installing native ios dependencies...");
+                CocoapodsHelper.Install(pathToBuiltProject);
+                Debug.Log("Cocoapods installed successfully");
+            }
+            
             LastMethod(pathToBuiltProject, postProcessors);
             #endif
         }
