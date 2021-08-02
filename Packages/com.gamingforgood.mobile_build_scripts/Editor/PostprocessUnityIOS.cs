@@ -22,35 +22,45 @@ namespace Commons.Editor {
 
         public static bool debug = false;
 
-        [Obsolete("Not required anymore, just implement IPostProcessIOS and you're done.")]
-        public static void RegisterPostProcessor(IPostProcessIOS processIos) {}
+        public static void RegisterPostProcessor(IPostProcessIOS processIos) {
+            postProcessors[processIos.GetType()] = processIos;
+        }
+
+        private static readonly Dictionary<Type, IPostProcessIOS> postProcessors
+            = new Dictionary<Type, IPostProcessIOS>();
 
         public void OnPostprocessBuild(BuildReport report) {
             if (report.summary.platformGroup != BuildTargetGroup.iOS) return;
+            #if UNITY_IOS
+            RegisterPostProcessor(new PostprocessForSwift());
+            #endif
 
             Debug.Log("⏩ PostprocessUnityIOS begins...");
 
             try {  
                 // get all types that implement IPostProcessIOS
-                var types = AppDomain.CurrentDomain.GetTypesWithInterface(typeof(IPostProcessIOS));
-                IPostProcessIOS[] allImplementors = types
-                    // check concrete implementation
-                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(IPostProcessIOS)))
-                    .Select(t => (IPostProcessIOS)Activator.CreateInstance(t)).ToArray();
-                
+                // fixme: replace RegisterPostProcessor with checking assemblies for types that implement IPostProcessIOS.
+                //   AppDomain.CurrentDomain is no good because not all assemblies are loaded when OnPostprocessBuild is called.
+                // var types = AppDomain.CurrentDomain.GetTypesWithInterface(typeof(IPostProcessIOS));
+                // var morePostProcessors = types
+                //     // check concrete implementation
+                //     .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(IPostProcessIOS)))
+                //     .Select(t => (IPostProcessIOS)Activator.CreateInstance(t)).ToArray();
+                // if (debug) {
+                //     Debug.Log("Listing IPostProcessIOS concrete implementations...");
+                //     foreach (var type in types) {
+                //         Debug.Log(type);
+                //     }
+                // }
                 if (debug) {
-                    Debug.Log("Listing IPostProcessIOS types...");
-                    foreach (var type in types) {
-                        Debug.Log(type);
-                    }
-                    Debug.Log("Listing IPostProcessIOS concrete implementations...");
-                    foreach (var pp in allImplementors) {
+                    Debug.Log("Listing registered postprocessors...");
+                    foreach (var pp in postProcessors) {
                         Debug.Log(pp);
                     }
                 }
 
                 PostBuild.Run(report.summary.platform, report.summary.outputPath,
-                    allImplementors);
+                    postProcessors.Values);
             } catch (Exception exc) {
                 // make sure build fails due to the exception
                 throw new BuildFailedException(exc);
