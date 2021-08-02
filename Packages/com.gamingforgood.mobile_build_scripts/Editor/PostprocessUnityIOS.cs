@@ -104,7 +104,7 @@ namespace Commons.Editor {
             // create Podfile and install pods
             var podfilePath = Path.Combine(pathToBuiltProject, "Podfile");
             IosDependencyResolver.CreatePodfile(podfilePath);
-            if (File.Exists(podfilePath)) {
+            if (File.Exists(podfilePath) && Application.platform == RuntimePlatform.OSXEditor) {
                 // install dependencies to build xcode project (also creates xcworkspace)
                 Debug.Log("Installing native ios dependencies...");
                 CocoapodsHelper.Install(pathToBuiltProject);
