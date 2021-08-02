@@ -20,24 +20,37 @@ namespace Commons.Editor {
         /// </summary>
         public int callbackOrder => 10000;
 
-        public static void RegisterPostProcessor(IPostProcessIOS processIos) {
-            postProcessors[processIos.GetType()] = processIos;
-        }
+        public static bool debug = false;
 
-        private static readonly Dictionary<Type, IPostProcessIOS> postProcessors
-            = new Dictionary<Type, IPostProcessIOS>();
+        [Obsolete("Not required anymore, just implement IPostProcessIOS and you're done.")]
+        public static void RegisterPostProcessor(IPostProcessIOS processIos) {}
 
         public void OnPostprocessBuild(BuildReport report) {
             if (report.summary.platformGroup != BuildTargetGroup.iOS) return;
-        #if UNITY_IOS
-            RegisterPostProcessor(new PostprocessForSwift());
-        #endif
 
             Debug.Log("⏩ PostprocessUnityIOS begins...");
 
-            try {
+            try {  
+                // get all types that implement IPostProcessIOS
+                var types = AppDomain.CurrentDomain.GetTypesWithInterface(typeof(IPostProcessIOS));
+                IPostProcessIOS[] allImplementors = types
+                    // check concrete implementation
+                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(IPostProcessIOS)))
+                    .Select(t => (IPostProcessIOS)Activator.CreateInstance(t)).ToArray();
+                
+                if (debug) {
+                    Debug.Log("Listing IPostProcessIOS types...");
+                    foreach (var type in types) {
+                        Debug.Log(type);
+                    }
+                    Debug.Log("Listing IPostProcessIOS concrete implementations...");
+                    foreach (var pp in allImplementors) {
+                        Debug.Log(pp);
+                    }
+                }
+
                 PostBuild.Run(report.summary.platform, report.summary.outputPath,
-                    postProcessors.Values);
+                    allImplementors);
             } catch (Exception exc) {
                 // make sure build fails due to the exception
                 throw new BuildFailedException(exc);
